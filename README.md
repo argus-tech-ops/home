@@ -116,8 +116,7 @@ All operations, applications, and forensic workflows are aligned with:
 
 ```
 HQ       →  Macas, Morona Santiago, Ecuador
-Web      →  argustechnologies.eco.com.ec
-Email    →  Zero-knowledge Proton infrastructure (custom domain)
+Email    →  argustechnologies001@protonmail.com
 ```
 
 ---
