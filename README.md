@@ -112,6 +112,27 @@ All operations, applications, and forensic workflows are aligned with:
 
 ---
 
+![License](https://img.shields.io/badge/LICENSE-PROPRIETARY-red?style=flat-square&labelColor=000)
+![Ref](https://img.shields.io/badge/REF-ARG--LIC--PROP--2026-gray?style=flat-square&labelColor=000)
+![Jurisdiction](https://img.shields.io/badge/JURISDICTION-Ecuador-blue?style=flat-square&labelColor=000)
+ 
+**This is not an open-source project.**
+ 
+All code, configurations, documentation, and assets are the exclusive intellectual property of ARGUS Technologies. Public visibility does not constitute a license to use, reproduce, or deploy any part of this Work.
+ 
+| | |
+|---|---|
+| View & fork | Within GitHub Terms of Service only |
+| Copy, modify, distribute | Strictly prohibited |
+| Commercial / institutional deployment | Requires contract [`ARG-SVC-002`] |
+ 
+> For the full legal text → [`LICENSE`](./LICENSE)  
+> For a human-readable breakdown → [`LICENSE.md`](./LICENSE.md)
+ 
+Governed by **Ecuadorian law (LOPDP)** · Jurisdiction: Morona Santiago Province.
+
+---
+
 ## 📍 Secure Transmission
 
 ```
