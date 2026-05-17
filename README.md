@@ -127,7 +127,7 @@ All code, configurations, documentation, and assets are the exclusive intellectu
 | Commercial / institutional deployment | Requires contract [`ARG-SVC-002`] |
  
 > For the full legal text → [`LICENSE`](./LICENSE)  
-> For a human-readable breakdown → [`LICENSE.md`](./LICENSE.md)
+> For a human-readable breakdown → [`LICENSE`](./LICENSE)
  
 Governed by **Ecuadorian law (LOPDP)** · Jurisdiction: Morona Santiago Province.
 
