@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARGUS — Sovereign Digital Defense</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --obsidian:    #0A0A0A;
+  --near-black:  #111111;
+  --surface:     #161616;
+  --surface2:    #1E1E1E;
+  --surface3:    #272727;
+  --border:      rgba(255,255,255,0.06);
+  --border2:     rgba(255,255,255,0.12);
+  --concrete:    #8E8E8E;
+  --concrete2:   #B8B8B8;
+  --white:       #FFFFFF;
+  --cobalt:      #0047D4;
+  --cobalt2:     #1A6AFF;
+  --cobalt-dim:  rgba(26,106,255,0.08);
+  --cobalt-glow: rgba(26,106,255,0.18);
+  --alert:       #FF5500;
+  --mono:   'IBM Plex Mono', monospace;
+  --display:'Barlow Condensed', sans-serif;
+  --body:   'IBM Plex Sans', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--obsidian);
+  color: var(--white);
+  font-family: var(--body);
+  overflow-x: hidden;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* ── SCANLINE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0,0,0,0.035) 3px,
+    rgba(0,0,0,0.035) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── MOVING SCAN BAR ── */
+body::after {
+  content: '';
+  position: fixed;
+  left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--cobalt2) 50%, transparent 100%);
+  animation: scanbar 12s linear infinite;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.35;
+}
+@keyframes scanbar {
+  0%   { top: -1px; opacity: 0; }
+  5%   { opacity: 0.35; }
+  95%  { opacity: 0.35; }
+  100% { top: 100vh; opacity: 0; }
+}
+
+/* ── LANGUAGE VISIBILITY ── */
+.es-only { display: none; }
+.en-only { display: block; }
+body.lang-es .es-only { display: block; }
+body.lang-es .en-only { display: none; }
+
+span.es-only { display: none; }
+span.en-only { display: inline; }
+body.lang-es span.es-only { display: inline; }
+body.lang-es span.en-only { display: none; }
+
+a.es-only  { display: none; }
+a.en-only  { display: inline; }
+body.lang-es a.es-only  { display: inline; }
+body.lang-es a.en-only  { display: none; }
+
+/* ticker tracks are flex */
+.ticker-track.es-only { display: none; }
+.ticker-track.en-only { display: flex; }
+body.lang-es .ticker-track.es-only { display: flex; }
+body.lang-es .ticker-track.en-only { display: none; }
+
+/* ── LANG TOGGLE ── */
+.lang-toggle {
+  display: flex;
+  gap: 0;
+  margin-right: 20px;
+}
+.lang-btn {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  padding: 5px 14px;
+  cursor: pointer;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--concrete);
+  transition: all 0.15s;
+}
+.lang-btn:first-child { border-right: none; }
+.lang-btn.active { background: var(--cobalt2); color: #fff; border-color: var(--cobalt2); }
+.lang-btn:hover:not(.active) { color: var(--white); }
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 54px;
+  background: rgba(10,10,10,0.96);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 48px;
+  z-index: 200;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  color: var(--white);
+  text-decoration: none;
+}
+
+.nav-dot {
+  width: 7px; height: 7px;
+  background: var(--cobalt2);
+  border-radius: 50%;
+  animation: blink 2s step-end infinite;
+  flex-shrink: 0;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--concrete);
+  text-decoration: none;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--white); }
+
+.nav-right {
+  display: flex;
+  align-items: center;
+}
+
+.nav-cta {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--cobalt2);
+  border: 1px solid var(--cobalt);
+  padding: 7px 18px;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.nav-cta:hover { background: var(--cobalt2); color: var(--white); }
+
+/* ── HERO ── */
+#hero {
+  min-height: 100vh;
+  padding-top: 54px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border2);
+}
+
+.hero-grid-bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 64px 64px;
+  animation: gridmove 25s linear infinite;
+}
+@keyframes gridmove {
+  0%   { transform: translate(0,0); }
+  100% { transform: translate(64px,64px); }
+}
+
+.hero-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 60%, transparent 30%, var(--obsidian) 80%);
+  pointer-events: none;
+}
+
+.hero-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 60px 48px 0;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-ref {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--cobalt2);
+  letter-spacing: 0.16em;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 36px;
+}
+.hero-ref::before {
+  content: '';
+  width: 32px; height: 1px;
+  background: var(--cobalt2);
+  display: block;
+}
+
+.hero-logo-mark { margin-bottom: 40px; }
+
+.hero-title {
+  font-family: var(--display);
+  font-size: clamp(96px, 16vw, 220px);
+  font-weight: 900;
+  letter-spacing: 0.07em;
+  line-height: 0.82;
+  color: var(--white);
+}
+
+.hero-scan-bar {
+  width: 100%;
+  height: 2px;
+  background: var(--cobalt2);
+  margin: 20px 0;
+  opacity: 0.7;
+  animation: pulse 3s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity: 0.3; transform: scaleX(0.97); }
+  50%      { opacity: 0.8; transform: scaleX(1); }
+}
+
+.hero-tagline {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--concrete2);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.hero-tagline .sep { color: var(--cobalt2); margin: 0 14px; }
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--border2);
+  margin-top: 72px;
+}
+
+.hero-stat {
+  padding: 28px 32px;
+  border-right: 1px solid var(--border);
+  position: relative;
+}
+.hero-stat::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 0; height: 2px;
+  background: var(--cobalt2);
+  transition: width 0.6s ease;
+}
+.hero-stat:hover::before { width: 100%; }
+.hero-stat:last-child { border-right: none; }
+
+.stat-val {
+  font-family: var(--display);
+  font-size: 44px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--white);
+}
+.stat-val .accent { color: var(--cobalt2); }
+
+.stat-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--concrete);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+
+/* ── SECTIONS ── */
+section { padding: 96px 48px; border-bottom: 1px solid var(--border); }
+
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--cobalt2);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 4px 12px 4px 10px;
+  border: 1px solid var(--cobalt-glow);
+  background: var(--cobalt-dim);
+  margin-bottom: 24px;
+}
+.section-tag .tag-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--cobalt2);
+  animation: blink 2s step-end infinite;
+}
+
+.section-title {
+  font-family: var(--display);
+  font-size: clamp(52px, 7vw, 96px);
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  line-height: 0.88;
+}
+
+/* ── MISSION ── */
+#mission {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+
+.mission-declaration {
+  font-family: var(--display);
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.05;
+  color: var(--white);
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+.mission-declaration em { font-style: normal; color: var(--cobalt2); }
+
+.mission-body {
+  font-family: var(--body);
+  font-size: 15px;
+  color: var(--concrete2);
+  line-height: 1.85;
+  max-width: 520px;
+}
+
+.mission-right {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 60px;
+}
+
+.trait-block {
+  background: var(--surface);
+  padding: 28px;
+  border-top: 2px solid var(--cobalt);
+  transition: background 0.2s;
+}
+.trait-block:hover { background: var(--surface2); }
+
+.trait-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--cobalt2);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.trait-text {
+  font-family: var(--body);
+  font-size: 13px;
+  color: var(--concrete2);
+  line-height: 1.75;
+}
+
+/* ── SERVICES ── */
+.services-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 48px;
+}
+
+.services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+
+.svc-card {
+  background: var(--surface);
+  padding: 36px 30px;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.2s;
+  cursor: default;
+}
+.svc-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--cobalt2);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s;
+}
+.svc-card:hover { background: var(--surface2); }
+.svc-card:hover::before { transform: scaleX(1); }
+
+.svc-bg-num {
+  position: absolute;
+  top: 12px; right: 16px;
+  font-family: var(--display);
+  font-size: 72px;
+  font-weight: 900;
+  color: rgba(255,255,255,0.025);
+  line-height: 1;
+  pointer-events: none;
+}
+
+.svc-code {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--cobalt2);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+  display: block;
+}
+.svc-name-en {
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+.svc-name-es {
+  font-family: var(--display);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  color: var(--concrete);
+  margin-bottom: 14px;
+}
+.svc-desc {
+  font-family: var(--body);
+  font-size: 13px;
+  color: var(--concrete2);
+  line-height: 1.8;
+}
+.svc-tag {
+  display: inline-block;
+  margin-top: 20px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--cobalt2);
+  border: 1px solid rgba(26,106,255,0.3);
+  background: var(--cobalt-dim);
+  padding: 3px 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.svc-tag.flagship {
+  color: var(--alert);
+  border-color: rgba(255,85,0,0.3);
+  background: rgba(255,85,0,0.06);
+}
+
+/* ── INTELLIGENCE ── */
+.intel-block {
+  background: var(--surface);
+  border: 1px solid rgba(26,106,255,0.25);
+  padding: 72px 56px;
+  position: relative;
+  overflow: hidden;
+}
+.intel-block::before {
+  content: 'ARGUS INTELLIGENCE';
+  position: absolute;
+  top: -30px; right: -80px;
+  font-family: var(--display);
+  font-size: 140px;
+  font-weight: 900;
+  color: rgba(26,106,255,0.03);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  pointer-events: none;
+  line-height: 1;
+}
+
+.intel-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--cobalt2);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  display: block;
+}
+.intel-title {
+  font-family: var(--display);
+  font-size: clamp(52px, 8vw, 100px);
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  line-height: 0.88;
+  margin-bottom: 8px;
+}
+.intel-divider { width: 56px; height: 2px; background: var(--cobalt2); margin: 28px 0; }
+
+.intel-body {
+  font-family: var(--body);
+  font-size: 15px;
+  color: var(--concrete2);
+  max-width: 640px;
+  line-height: 1.85;
+  margin-bottom: 48px;
+}
+
+.intel-caps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+
+.intel-cap {
+  background: rgba(26,106,255,0.06);
+  border: 1px solid rgba(26,106,255,0.16);
+  padding: 22px 20px;
+  transition: background 0.2s, border-color 0.2s;
+}
+.intel-cap:hover { background: rgba(26,106,255,0.1); border-color: rgba(26,106,255,0.3); }
+
+.cap-title {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--cobalt2);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: block;
+}
+.cap-text { font-family: var(--body); font-size: 13px; color: var(--concrete2); line-height: 1.75; }
+
+/* ── TICKER ── */
+#ticker {
+  background: var(--near-black);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.ticker-label {
+  background: var(--cobalt2);
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  padding: 0 16px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+.ticker-wrap { overflow: hidden; flex: 1; position: relative; height: 40px; }
+
+.ticker-track {
+  display: flex;
+  gap: 0;
+  animation: ticker 30s linear infinite;
+  white-space: nowrap;
+  position: absolute;
+  top: 0; left: 0;
+  height: 40px;
+  align-items: center;
+}
+@keyframes ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.ticker-item {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--concrete);
+  letter-spacing: 0.1em;
+  padding: 0 32px;
+  border-right: 1px solid var(--border);
+  height: 40px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.ticker-item .t-accent { color: var(--cobalt2); margin-right: 8px; }
+.ticker-item .t-alert  { color: var(--alert); }
+
+/* ── PROCESS ── */
+.process-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  margin-top: 56px;
+}
+
+.process-step {
+  background: var(--surface);
+  padding: 36px 28px;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.2s;
+}
+.process-step:hover { background: var(--surface2); }
+
+.process-num {
+  font-family: var(--display);
+  font-size: 80px;
+  font-weight: 900;
+  color: rgba(255,255,255,0.04);
+  line-height: 1;
+  position: absolute;
+  top: 8px; right: 16px;
+}
+.process-step-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--cobalt2);
+  letter-spacing: 0.16em;
+  margin-bottom: 20px;
+  display: block;
+}
+.process-step-title {
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.1;
+  margin-bottom: 14px;
+}
+.process-step-desc {
+  font-family: var(--body);
+  font-size: 13px;
+  color: var(--concrete2);
+  line-height: 1.8;
+}
+
+/* ── CONTACT ── */
+#contact { background: var(--near-black); }
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  margin-top: 56px;
+}
+
+.contact-info { background: var(--surface); padding: 56px 48px; }
+
+.contact-info-item {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+.contact-info-item:last-child { border-bottom: none; }
+
+.ci-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--cobalt2);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  min-width: 84px;
+  padding-top: 2px;
+}
+.ci-val {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--concrete2);
+  letter-spacing: 0.04em;
+}
+
+.contact-terminal {
+  background: var(--obsidian);
+  border: 1px solid var(--border2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.terminal-bar {
+  background: var(--surface2);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.t-circle { width: 10px; height: 10px; border-radius: 50%; }
+.t-circle.red    { background: #FF5F56; }
+.t-circle.yellow { background: #FFBD2E; }
+.t-circle.green  { background: #27C93F; }
+
+.terminal-title-bar {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--concrete);
+  letter-spacing: 0.1em;
+  margin-left: auto;
+}
+
+.terminal-body {
+  padding: 32px 36px;
+  flex: 1;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.9;
+}
+.t-line { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 4px; }
+.t-prompt { color: var(--cobalt2); flex-shrink: 0; }
+.t-text   { color: var(--concrete2); }
+.t-cursor {
+  display: inline-block;
+  width: 8px; height: 14px;
+  background: var(--cobalt2);
+  animation: cur 1s step-end infinite;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+@keyframes cur { 0%,100%{opacity:1} 50%{opacity:0} }
+
+.t-input-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+  border-bottom: 1px solid var(--border2);
+  padding-bottom: 12px;
+}
+.t-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--white);
+  flex: 1;
+  caret-color: var(--cobalt2);
+}
+.t-input::placeholder { color: var(--concrete); }
+
+.t-submit {
+  background: var(--cobalt2);
+  border: none;
+  color: var(--white);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  padding: 8px 20px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+.t-submit:hover { background: var(--cobalt); }
+
+/* ── FOOTER ── */
+footer {
+  padding: 80px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-top: 1px solid var(--border2);
+}
+.footer-mark {
+  font-family: var(--display);
+  font-size: 88px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  color: rgba(255,255,255,0.04);
+}
+.footer-info {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--concrete);
+  line-height: 2.2;
+  letter-spacing: 0.06em;
+  text-align: right;
+}
+.footer-info .hi { color: var(--cobalt2); }
+.footer-tagline {
+  font-family: var(--display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: rgba(255,255,255,0.2);
+  margin-top: 16px;
+  text-align: right;
+}
+
+/* ── SCROLL REVEAL ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  nav { padding: 0 20px; }
+  .nav-links { display: none; }
+  section { padding: 64px 20px; }
+  #mission { grid-template-columns: 1fr; gap: 40px; }
+  .hero-stats { grid-template-columns: 1fr 1fr; }
+  .services-grid { grid-template-columns: 1fr; }
+  .intel-caps { grid-template-columns: 1fr 1fr; }
+  .process-grid { grid-template-columns: 1fr 1fr; }
+  .contact-grid { grid-template-columns: 1fr; }
+  .hero-body { padding: 40px 20px 0; }
+  .services-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+  footer { padding: 48px 20px; flex-direction: column; align-items: flex-start; gap: 24px; }
+  .footer-info, .footer-tagline { text-align: left; }
+  .intel-block { padding: 40px 28px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ NAV ══════════════════ -->
+<nav>
+  <a href="#hero" class="nav-brand">
+    <div class="nav-dot"></div>
+    ARGUS
+  </a>
+  <ul class="nav-links">
+    <li><a href="#mission"><span class="en-only">MISSION</span><span class="es-only">MISIÓN</span></a></li>
+    <li><a href="#services"><span class="en-only">SERVICES</span><span class="es-only">SERVICIOS</span></a></li>
+    <li><a href="#intelligence"><span class="en-only">INTELLIGENCE</span><span class="es-only">INTELIGENCIA</span></a></li>
+    <li><a href="#process"><span class="en-only">PROTOCOL</span><span class="es-only">PROTOCOLO</span></a></li>
+    <li><a href="#contact"><span class="en-only">CONTACT</span><span class="es-only">CONTACTO</span></a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('es')">ES</button>
+    </div>
+    <a href="#contact" class="nav-cta en-only">INITIATE ENGAGEMENT</a>
+    <a href="#contact" class="nav-cta es-only">INICIAR CONTACTO</a>
+  </div>
+</nav>
+
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<section id="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-vignette"></div>
+
+  <div class="hero-body">
+    <div class="hero-ref">
+      REF: ARG-WEB-001 &nbsp;// &nbsp;<span class="en-only">SOVEREIGN DIGITAL DEFENSE</span><span class="es-only">DEFENSA DIGITAL SOBERANA</span> &nbsp;// &nbsp;MACAS, MORONA SANTIAGO
+    </div>
+
+    <div class="hero-logo-mark">
+      <svg width="96" height="96" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" aria-label="ARGUS Panoptes Mark">
+        <rect x="0"   y="0"   width="34" height="34" fill="#fff"/>
+        <rect x="42"  y="0"   width="34" height="34" fill="#fff"/>
+        <rect x="84"  y="0"   width="34" height="34" fill="#fff"/>
+        <rect x="126" y="0"   width="34" height="34" fill="#fff"/>
+        <rect x="0"   y="42"  width="34" height="34" fill="#fff"/>
+        <rect x="42"  y="42"  width="34" height="34" fill="#fff"/>
+        <rect x="84"  y="42"  width="34" height="34" fill="#fff"/>
+        <rect x="126" y="42"  width="34" height="34" fill="#fff"/>
+        <rect x="0"   y="84"  width="34" height="34" fill="#fff"/>
+        <rect x="42"  y="84"  width="34" height="34" fill="#fff"/>
+        <rect x="84"  y="84"  width="34" height="34" fill="none" stroke="#1A6AFF" stroke-width="3"/>
+        <rect x="126" y="84"  width="34" height="34" fill="#fff"/>
+        <rect x="0"   y="126" width="34" height="34" fill="#fff"/>
+        <rect x="42"  y="126" width="34" height="34" fill="#fff"/>
+        <rect x="84"  y="126" width="34" height="34" fill="#fff"/>
+        <rect x="126" y="126" width="34" height="34" fill="#fff"/>
+      </svg>
+    </div>
+
+    <div class="hero-title">ARGUS</div>
+    <div class="hero-scan-bar"></div>
+
+    <div class="hero-tagline">
+      <span class="en-only">
+        <span class="sep">◆</span> NOTHING UNSEEN <span class="sep">◆</span> SOVEREIGN DIGITAL DEFENSE <span class="sep">◆</span> MACAS, MORONA SANTIAGO
+      </span>
+      <span class="es-only">
+        <span class="sep">◆</span> NADA SIN DETECTAR <span class="sep">◆</span> DEFENSA DIGITAL SOBERANA <span class="sep">◆</span> MACAS, MORONA SANTIAGO
+      </span>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="stat-val">100<span class="accent">+</span></div>
+        <div class="stat-label en-only">Eyes on the network</div>
+        <div class="stat-label es-only">Ojos en la red</div>
+      </div>
+      <div class="hero-stat">
+        <div class="stat-val"><span class="accent">24</span>/7</div>
+        <div class="stat-label en-only">Constant vigilance</div>
+        <div class="stat-label es-only">Vigilancia constante</div>
+      </div>
+      <div class="hero-stat">
+        <div class="stat-val">0<span class="accent">ms</span></div>
+        <div class="stat-label en-only">Reaction latency target</div>
+        <div class="stat-label es-only">Latencia de reacción objetivo</div>
+      </div>
+      <div class="hero-stat">
+        <div class="stat-val"><span class="accent">∞</span></div>
+        <div class="stat-label en-only">Threat coverage horizon</div>
+        <div class="stat-label es-only">Horizonte de cobertura</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════ TICKER ══════════════════ -->
+<div id="ticker">
+  <div class="ticker-label">◆ <span class="en-only">LIVE FEED</span><span class="es-only">EN VIVO</span></div>
+  <div class="ticker-wrap">
+
+    <!-- ENGLISH TRACK -->
+    <div class="ticker-track en-only">
+      <span class="ticker-item"><span class="t-accent">STATUS:</span> MONITORING ACTIVE — EC-MOR-001</span>
+      <span class="ticker-item"><span class="t-accent">SECTOR:</span> MORONA SANTIAGO CORRIDOR</span>
+      <span class="ticker-item"><span class="t-accent">PROTOCOL:</span> ARGUS PANOPTES — ALL EYES ACTIVE</span>
+      <span class="ticker-item"><span class="t-accent">OSINT:</span> CONTINUOUS — SURFACE / SOCIAL / GEO</span>
+      <span class="ticker-item"><span class="t-accent">SCAN:</span> ENDPOINT SWEEP COMPLETE — <span class="t-alert">3 FLAGS</span></span>
+      <span class="ticker-item"><span class="t-accent">SVC:</span> INCIDENT RESPONSE — 24/7 ON RETAINER</span>
+      <span class="ticker-item"><span class="t-accent">COMPLIANCE:</span> LOPDP / ARCOTEL — ALIGNED</span>
+      <span class="ticker-item"><span class="t-accent">UPTIME:</span> 100% — ZERO MISSED DETECTIONS</span>
+      <!-- duplicate for seamless loop -->
+      <span class="ticker-item"><span class="t-accent">STATUS:</span> MONITORING ACTIVE — EC-MOR-001</span>
+      <span class="ticker-item"><span class="t-accent">SECTOR:</span> MORONA SANTIAGO CORRIDOR</span>
+      <span class="ticker-item"><span class="t-accent">PROTOCOL:</span> ARGUS PANOPTES — ALL EYES ACTIVE</span>
+      <span class="ticker-item"><span class="t-accent">OSINT:</span> CONTINUOUS — SURFACE / SOCIAL / GEO</span>
+      <span class="ticker-item"><span class="t-accent">SCAN:</span> ENDPOINT SWEEP COMPLETE — <span class="t-alert">3 FLAGS</span></span>
+      <span class="ticker-item"><span class="t-accent">SVC:</span> INCIDENT RESPONSE — 24/7 ON RETAINER</span>
+      <span class="ticker-item"><span class="t-accent">COMPLIANCE:</span> LOPDP / ARCOTEL — ALIGNED</span>
+      <span class="ticker-item"><span class="t-accent">UPTIME:</span> 100% — ZERO MISSED DETECCIONES</span>
+    </div>
+
+    <!-- SPANISH TRACK -->
+    <div class="ticker-track es-only">
+      <span class="ticker-item"><span class="t-accent">ESTADO:</span> MONITOREO ACTIVO — EC-MOR-001</span>
+      <span class="ticker-item"><span class="t-accent">SECTOR:</span> CORREDOR MORONA SANTIAGO</span>
+      <span class="ticker-item"><span class="t-accent">PROTOCOLO:</span> ARGUS PANOPTES — TODOS LOS OJOS ACTIVOS</span>
+      <span class="ticker-item"><span class="t-accent">OSINT:</span> CONTINUO — SUPERFICIE / SOCIAL / GEO</span>
+      <span class="ticker-item"><span class="t-accent">ESCANEO:</span> BARRIDO DE ENDPOINTS COMPLETO — <span class="t-alert">3 ALERTAS</span></span>
+      <span class="ticker-item"><span class="t-accent">SVC:</span> RESPUESTA A INCIDENTES — 24/7 RETAINER</span>
+      <span class="ticker-item"><span class="t-accent">CUMPLIMIENTO:</span> LOPDP / ARCOTEL — ALINEADO</span>
+      <span class="ticker-item"><span class="t-accent">UPTIME:</span> 100% — CERO DETECCIONES FALLIDAS</span>
+      <!-- duplicate -->
+      <span class="ticker-item"><span class="t-accent">ESTADO:</span> MONITOREO ACTIVO — EC-MOR-001</span>
+      <span class="ticker-item"><span class="t-accent">SECTOR:</span> CORREDOR MORONA SANTIAGO</span>
+      <span class="ticker-item"><span class="t-accent">PROTOCOLO:</span> ARGUS PANOPTES — TODOS LOS OJOS ACTIVOS</span>
+      <span class="ticker-item"><span class="t-accent">OSINT:</span> CONTINUO — SUPERFICIE / SOCIAL / GEO</span>
+      <span class="ticker-item"><span class="t-accent">ESCANEO:</span> BARRIDO DE ENDPOINTS COMPLETO — <span class="t-alert">3 ALERTAS</span></span>
+      <span class="ticker-item"><span class="t-accent">SVC:</span> RESPUESTA A INCIDENTES — 24/7 RETAINER</span>
+      <span class="ticker-item"><span class="t-accent">CUMPLIMIENTO:</span> LOPDP / ARCOTEL — ALINEADO</span>
+      <span class="ticker-item"><span class="t-accent">UPTIME:</span> 100% — CERO DETECCIONES FALLIDAS</span>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════ MISSION ══════════════════ -->
+<section id="mission" class="reveal">
+  <div class="mission-left">
+    <div class="section-tag">
+      <div class="tag-dot"></div>
+      REF: ARG-001 // <span class="en-only">MISSION STATEMENT</span><span class="es-only">DECLARACIÓN DE MISIÓN</span>
+    </div>
+
+    <div class="mission-declaration">
+      <span class="en-only">THE INFORMATION LAYER<br>IS THE <em>DECISIVE</em><br>TERRAIN.</span>
+      <span class="es-only">LA CAPA DE INFORMACIÓN<br>ES EL TERRENO<br><em>DECISIVO.</em></span>
+    </div>
+
+    <p class="mission-body en-only">
+      ARGUS operates at the intersection of digital infrastructure and territorial security. Our methodology combines continuous network surveillance with advanced open-source intelligence to provide clients with the most current threat picture in the Ecuadorian Amazonian corridor.<br><br>
+      In a region defined by structural tension between indigenous governance, resource extraction, and state authority — the organizations that see clearly are the ones that survive. ARGUS ensures you see everything.
+    </p>
+    <p class="mission-body es-only">
+      ARGUS opera en la intersección de la infraestructura digital y la seguridad territorial. Nuestra metodología combina vigilancia de red continua con inteligencia de fuentes abiertas para proporcionar a los clientes el cuadro de amenazas más actualizado en el corredor amazónico ecuatoriano.<br><br>
+      En una región definida por la tensión estructural entre la gobernanza indígena, la extracción de recursos y la autoridad estatal — las organizaciones que ven con claridad son las que sobreviven. ARGUS garantiza que usted vea todo.
+    </p>
+  </div>
+
+  <div class="mission-right">
+    <div class="trait-block reveal reveal-delay-1">
+      <div class="trait-label en-only">01 — DIRECT</div>
+      <div class="trait-label es-only">01 — DIRECTO</div>
+      <p class="trait-text en-only">State facts, not opinions. Every communication reads like a field report: precise, structured, actionable. ARGUS speaks in assertions, not possibilities.</p>
+      <p class="trait-text es-only">Hechos, no opiniones. Cada comunicación se lee como un reporte de campo: precisa, estructurada, accionable. ARGUS habla en afirmaciones, no en posibilidades.</p>
+    </div>
+    <div class="trait-block reveal reveal-delay-2">
+      <div class="trait-label en-only">02 — AUTHORITATIVE</div>
+      <div class="trait-label es-only">02 — AUTORIDAD</div>
+      <p class="trait-text en-only">We understand the geopolitical and regional risk landscape specific to Ecuador and Morona Santiago. Technical language is used accurately — not as decoration.</p>
+      <p class="trait-text es-only">Comprendemos el panorama de riesgo geopolítico y regional específico de Ecuador y Morona Santiago. El lenguaje técnico se usa con precisión — no como decoración.</p>
+    </div>
+    <div class="trait-block reveal reveal-delay-3">
+      <div class="trait-label en-only">03 — UNSENTIMENTAL</div>
+      <div class="trait-label es-only">03 — SIN SENTIMENTALISMOS</div>
+      <p class="trait-text en-only">ARGUS does not comfort — it informs. We monitor, we analyze, we neutralize. That alone is the value proposition. No platitudes. No padding.</p>
+      <p class="trait-text es-only">ARGUS no consuela — informa. Monitoreamos, analizamos, neutralizamos. Esa es la propuesta de valor. Sin platitudes. Sin relleno.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════ SERVICES ══════════════════ -->
+<section id="services">
+  <div class="services-header reveal">
+    <div>
+      <div class="section-tag">
+        <div class="tag-dot"></div>
+        REF: ARG-002 // <span class="en-only">SERVICE LINES</span><span class="es-only">LÍNEAS DE SERVICIO</span>
+      </div>
+      <div class="section-title">
+        <span class="en-only">WHAT<br>WE DEPLOY.</span>
+        <span class="es-only">QUÉ<br>DESPLEGAMOS.</span>
+      </div>
+    </div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--concrete);letter-spacing:0.1em;line-height:2;max-width:280px;">
+      <span class="en-only">
+        6 ACTIVE SERVICE LINES<br>
+        ON-DEMAND + RETAINER<br>
+        ENGLISH / ESPAÑOL<br>
+        MACAS, MORONA SANTIAGO
+      </span>
+      <span class="es-only">
+        6 LÍNEAS DE SERVICIO ACTIVAS<br>
+        A DEMANDA + RETAINER<br>
+        INGLÉS / ESPAÑOL<br>
+        MACAS, MORONA SANTIAGO
+      </span>
+    </div>
+  </div>
+
+  <div class="services-grid">
+
+    <div class="svc-card reveal reveal-delay-1">
+      <div class="svc-bg-num">01</div>
+      <span class="svc-code">SVC-001 // PERIMETER</span>
+      <div class="svc-name-en">NETWORK SURVEILLANCE</div>
+      <div class="svc-name-es">Vigilancia de Red</div>
+      <p class="svc-desc en-only">Continuous monitoring of client infrastructure perimeters. Real-time detection, classification, and logging of anomalous traffic patterns across all entry vectors.</p>
+      <p class="svc-desc es-only">Monitoreo continuo de los perímetros de infraestructura del cliente. Detección en tiempo real, clasificación y registro de patrones de tráfico anómalos en todos los vectores de entrada.</p>
+      <span class="svc-tag"><span class="en-only">CONTINUOUS</span><span class="es-only">CONTINUO</span></span>
+    </div>
+
+    <div class="svc-card reveal reveal-delay-2">
+      <div class="svc-bg-num">02</div>
+      <span class="svc-code">SVC-002 // FORENSIC</span>
+      <div class="svc-name-en">INCIDENT RESPONSE</div>
+      <div class="svc-name-es">Respuesta ante Incidentes</div>
+      <p class="svc-desc en-only">Immediate intervention to contain, clean, and recover systems after a confirmed breach. Deployed on-site or remotely within hours. Full forensic chain-of-custody documentation provided.</p>
+      <p class="svc-desc es-only">Intervención inmediata para contener, limpiar y recuperar sistemas tras una brecha confirmada. Despliegue en sitio o remoto en horas. Documentación forense completa con cadena de custodia.</p>
+      <span class="svc-tag">24/7 <span class="en-only">RETAINER</span><span class="es-only">RETAINER</span></span>
+    </div>
+
+    <div class="svc-card reveal reveal-delay-3">
+      <div class="svc-bg-num">03</div>
+      <span class="svc-code">SVC-003 // ADVISORY</span>
+      <div class="svc-name-en">SECURITY AUDITS</div>
+      <div class="svc-name-es">Auditorías de Seguridad</div>
+      <p class="svc-desc en-only">Structured assessment of institutional digital infrastructure against established threat matrices. Output: classified institutional reports with section codes and prioritized remediation.</p>
+      <p class="svc-desc es-only">Evaluación estructurada de la infraestructura digital institucional frente a matrices de amenaza establecidas. Resultado: reportes institucionales clasificados con códigos de sección y remediación priorizada.</p>
+      <span class="svc-tag"><span class="en-only">PERIODIC</span><span class="es-only">PERIÓDICO</span></span>
+    </div>
+
+    <div class="svc-card reveal reveal-delay-1">
+      <div class="svc-bg-num">04</div>
+      <span class="svc-code">SVC-004 // INTEL</span>
+      <div class="svc-name-en">ARGUS INTELLIGENCE</div>
+      <div class="svc-name-es">ARGUS Inteligencia</div>
+      <p class="svc-desc en-only">Open-source intelligence collection and analysis targeting threats to government, extractive industry, and private infrastructure in the Morona Santiago corridor.</p>
+      <p class="svc-desc es-only">Recolección y análisis de inteligencia de fuentes abiertas orientado a amenazas contra el gobierno, la industria extractiva y la infraestructura privada en el corredor de Morona Santiago.</p>
+      <span class="svc-tag flagship"><span class="en-only">FLAGSHIP</span><span class="es-only">INSIGNIA</span></span>
+    </div>
+
+    <div class="svc-card reveal reveal-delay-2">
+      <div class="svc-bg-num">05</div>
+      <span class="svc-code">SVC-005 // TRAINING</span>
+      <div class="svc-name-en">OPERATIONAL SECURITY</div>
+      <div class="svc-name-es">Seguridad Operacional</div>
+      <p class="svc-desc en-only">Personnel training in digital hygiene, secure communication protocols, and threat awareness. Tailored for subnational government, municipal bodies, and NGOs.</p>
+      <p class="svc-desc es-only">Capacitación de personal en higiene digital, protocolos de comunicación segura y conciencia de amenazas. Diseñado para gobiernos subnacionales, organismos municipales y ONGs.</p>
+      <span class="svc-tag"><span class="en-only">RECURRING</span><span class="es-only">RECURRENTE</span></span>
+    </div>
+
+    <div class="svc-card reveal reveal-delay-3">
+      <div class="svc-bg-num">06</div>
+      <span class="svc-code">SVC-006 // COMPLIANCE</span>
+      <div class="svc-name-en">REGULATORY ALIGNMENT</div>
+      <div class="svc-name-es">Alineación Regulatoria</div>
+      <p class="svc-desc en-only">Alignment of digital operations with Ecuadorian data protection law (LOPDP) and ARCOTEL technical standards. Full documentation for institutional compliance portfolios.</p>
+      <p class="svc-desc es-only">Alineación de operaciones digitales con la ley de protección de datos ecuatoriana (LOPDP) y estándares técnicos de ARCOTEL. Documentación completa para portafolios de cumplimiento institucional.</p>
+      <span class="svc-tag"><span class="en-only">ANNUAL</span><span class="es-only">ANUAL</span></span>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════ INTELLIGENCE SPOTLIGHT ══════════════════ -->
+<section id="intelligence">
+  <div class="section-tag reveal">
+    <div class="tag-dot"></div>
+    REF: ARG-003 // <span class="en-only">FLAGSHIP PRODUCT</span><span class="es-only">PRODUCTO INSIGNIA</span>
+  </div>
+
+  <div class="intel-block reveal">
+    <span class="intel-eyebrow">
+      <span class="en-only">DIVISION / FLAGSHIP PRODUCT — SVC-004</span>
+      <span class="es-only">DIVISIÓN / PRODUCTO INSIGNIA — SVC-004</span>
+    </span>
+    <div class="intel-title">ARGUS<br>INTELLIGENCE</div>
+    <div class="intel-divider"></div>
+
+    <p class="intel-body en-only">
+      A dedicated intelligence branch operating on Open Source Intelligence (OSINT) principles to track emerging threats before they materialize against local government bodies, extractive industry operators, and private infrastructure in Morona Santiago and the broader Ecuadorian Amazonian corridor.<br><br>
+      In a territory defined by structural tension between indigenous governance, resource extraction, and state authority — the information layer is the decisive terrain. ARGUS Intelligence delivers classified weekly briefs. The eyes don't close.
+    </p>
+    <p class="intel-body es-only">
+      Una rama de inteligencia dedicada, que opera bajo principios de Inteligencia de Fuentes Abiertas (OSINT), para rastrear amenazas emergentes antes de que se materialicen contra organismos gubernamentales locales, operadores de industria extractiva e infraestructura privada en Morona Santiago y el corredor amazónico ecuatoriano.<br><br>
+      En un territorio definido por la tensión estructural entre la gobernanza indígena, la extracción de recursos y la autoridad estatal — la capa de información es el terreno decisivo. ARGUS Intelligence entrega briefs semanales clasificados. Los ojos no se cierran.
+    </p>
+
+    <div class="intel-caps">
+      <div class="intel-cap">
+        <span class="cap-title"><span class="en-only">SURFACE WEB</span><span class="es-only">WEB SUPERFICIAL</span></span>
+        <p class="cap-text en-only">Continuous indexing of regional news, government bulletins, and institutional communications for emerging threat signals.</p>
+        <p class="cap-text es-only">Indexación continua de noticias regionales, boletines gubernamentales y comunicaciones institucionales en busca de señales de amenaza.</p>
+      </div>
+      <div class="intel-cap">
+        <span class="cap-title"><span class="en-only">SOCIAL SIGNALS</span><span class="es-only">SEÑALES SOCIALES</span></span>
+        <p class="cap-text en-only">Structured monitoring of social platforms for narratives and coordinated activity targeting key institutions in the sector.</p>
+        <p class="cap-text es-only">Monitoreo estructurado de plataformas sociales para detectar narrativas y actividad coordinada dirigida a instituciones clave del sector.</p>
+      </div>
+      <div class="intel-cap">
+        <span class="cap-title"><span class="en-only">GEOSPATIAL</span><span class="es-only">GEOESPACIAL</span></span>
+        <p class="cap-text en-only">Satellite and open-source geographic analysis of infrastructure and movement patterns in the Amazonian corridor.</p>
+        <p class="cap-text es-only">Análisis geográfico satelital y de fuentes abiertas de infraestructura y patrones de movimiento en el corredor amazónico.</p>
+      </div>
+      <div class="intel-cap">
+        <span class="cap-title"><span class="en-only">REPORTING</span><span class="es-only">REPORTERÍA</span></span>
+        <p class="cap-text en-only">Classified weekly intelligence briefs delivered in ARGUS institutional format — section-coded, versioned, chain-of-custody compliant.</p>
+        <p class="cap-text es-only">Briefs semanales de inteligencia clasificada en formato institucional ARGUS — codificados por sección, versionados, con cadena de custodia.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════ PROCESS ══════════════════ -->
+<section id="process">
+  <div class="section-tag reveal">
+    <div class="tag-dot"></div>
+    REF: ARG-004 // <span class="en-only">ENGAGEMENT PROTOCOL</span><span class="es-only">PROTOCOLO DE COMPROMISO</span>
+  </div>
+  <div class="section-title reveal">
+    <span class="en-only">HOW WE<br>ENGAGE.</span>
+    <span class="es-only">CÓMO<br>OPERAMOS.</span>
+  </div>
+  <p class="reveal" style="font-family:var(--mono);font-size:11px;color:var(--concrete);letter-spacing:0.1em;margin-top:12px;">
+    <span class="en-only">FOUR STEPS. NO AMBIGUITY.</span>
+    <span class="es-only">CUATRO PASOS. SIN AMBIGÜEDAD.</span>
+  </p>
+
+  <div class="process-grid">
+
+    <div class="process-step reveal reveal-delay-1">
+      <div class="process-num">01</div>
+      <span class="process-step-num">STEP 01</span>
+      <div class="process-step-title">
+        <span class="en-only">INITIAL ASSESSMENT</span>
+        <span class="es-only">EVALUACIÓN INICIAL</span>
+      </div>
+      <p class="process-step-desc en-only">First contact within 24 hours. We map your current exposure, identify priority assets, and establish the scope of engagement. No generic questionnaires.</p>
+      <p class="process-step-desc es-only">Primer contacto en 24 horas. Mapeamos su exposición actual, identificamos activos prioritarios y establecemos el alcance del compromiso. Sin cuestionarios genéricos.</p>
+    </div>
+
+    <div class="process-step reveal reveal-delay-2">
+      <div class="process-num">02</div>
+      <span class="process-step-num">STEP 02</span>
+      <div class="process-step-title">
+        <span class="en-only">THREAT MAPPING</span>
+        <span class="es-only">MAPEO DE AMENAZAS</span>
+      </div>
+      <p class="process-step-desc en-only">ARGUS deploys initial surveillance and OSINT collection against your sector and institution. Threats are classified by severity, vector, and actor type.</p>
+      <p class="process-step-desc es-only">ARGUS despliega vigilancia inicial y recolección OSINT contra su sector e institución. Las amenazas se clasifican por severidad, vector y tipo de actor.</p>
+    </div>
+
+    <div class="process-step reveal reveal-delay-3">
+      <div class="process-num">03</div>
+      <span class="process-step-num">STEP 03</span>
+      <div class="process-step-title">
+        <span class="en-only">HARDENING & RESPONSE</span>
+        <span class="es-only">BLINDAJE Y RESPUESTA</span>
+      </div>
+      <p class="process-step-desc en-only">Active remediation, infrastructure hardening, or incident containment — deployed based on findings. Every action is documented under institutional reference codes.</p>
+      <p class="process-step-desc es-only">Remediación activa, blindaje de infraestructura o contención de incidentes — desplegados según los hallazgos. Cada acción se documenta bajo códigos de referencia institucional.</p>
+    </div>
+
+    <div class="process-step reveal reveal-delay-4">
+      <div class="process-num">04</div>
+      <span class="process-step-num">STEP 04</span>
+      <div class="process-step-title">
+        <span class="en-only">CONTINUOUS COVERAGE</span>
+        <span class="es-only">COBERTURA CONTINUA</span>
+      </div>
+      <p class="process-step-desc en-only">Ongoing monitoring, periodic audits, and weekly intelligence briefs. ARGUS does not deliver a report and disappear — the eyes remain open.</p>
+      <p class="process-step-desc es-only">Monitoreo continuo, auditorías periódicas y briefs semanales de inteligencia. ARGUS no entrega un reporte y desaparece — los ojos permanecen abiertos.</p>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════ CONTACT ══════════════════ -->
+<section id="contact">
+  <div class="section-tag reveal">
+    <div class="tag-dot"></div>
+    REF: ARG-005 // <span class="en-only">INITIATE ENGAGEMENT</span><span class="es-only">INICIAR CONTACTO</span>
+  </div>
+  <div class="section-title reveal">
+    <span class="en-only">INITIATE<br>CONTACT.</span>
+    <span class="es-only">INICIAR<br>CONTACTO.</span>
+  </div>
+  <p class="reveal" style="font-family:var(--body);font-size:14px;color:var(--concrete2);margin-top:20px;max-width:480px;line-height:1.8;">
+    <span class="en-only">Proposals delivered in English and Spanish within 48 hours of first contact. All engagements are documented under institutional reference codes.</span>
+    <span class="es-only">Propuestas entregadas en inglés y español en un plazo de 48 horas tras el primer contacto. Todos los compromisos se documentan bajo códigos de referencia institucional.</span>
+  </p>
+
+  <div class="contact-grid reveal">
+
+    <!-- INFO -->
+    <div class="contact-info">
+      <div style="font-family:var(--mono);font-size:9px;color:var(--cobalt2);letter-spacing:0.18em;margin-bottom:24px;">
+        <span class="en-only">CONTACT DETAILS</span>
+        <span class="es-only">INFORMACIÓN DE CONTACTO</span>
+      </div>
+
+      <div class="contact-info-item">
+        <span class="ci-label"><span class="en-only">LOCATION</span><span class="es-only">UBICACIÓN</span></span>
+        <span class="ci-val">MACAS, MORONA SANTIAGO<br>ECUADOR — EC-MOR-001</span>
+      </div>
+      <div class="contact-info-item">
+        <span class="ci-label"><span class="en-only">COVERAGE</span><span class="es-only">COBERTURA</span></span>
+        <span class="ci-val">
+          <span class="en-only">AMAZONIAN CORRIDOR<br>NATIONAL + REGIONAL</span>
+          <span class="es-only">CORREDOR AMAZÓNICO<br>NACIONAL + REGIONAL</span>
+        </span>
+      </div>
+      <div class="contact-info-item">
+        <span class="ci-label"><span class="en-only">RESPONSE</span><span class="es-only">RESPUESTA</span></span>
+        <span class="ci-val">
+          <span class="en-only">&lt; 24H INITIAL ASSESSMENT<br>24/7 INCIDENT RESPONSE</span>
+          <span class="es-only">&lt; 24H EVALUACIÓN INICIAL<br>24/7 RESPUESTA A INCIDENTES</span>
+        </span>
+      </div>
+      <div class="contact-info-item">
+        <span class="ci-label"><span class="en-only">LANGUAGES</span><span class="es-only">IDIOMAS</span></span>
+        <span class="ci-val">ENGLISH / ESPAÑOL</span>
+      </div>
+      <div class="contact-info-item">
+        <span class="ci-label"><span class="en-only">PROTOCOL</span><span class="es-only">PROTOCOLO</span></span>
+        <span class="ci-val">
+          ARGUS PANOPTES<br>
+          <span class="en-only">NOTHING UNSEEN</span>
+          <span class="es-only">NADA SIN DETECTAR</span>
+        </span>
+      </div>
+
+      <div style="margin-top:36px;padding:20px;background:rgba(26,106,255,0.06);border:1px solid rgba(26,106,255,0.2);">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--cobalt2);letter-spacing:0.18em;margin-bottom:8px;">STATUS</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:#22C55E;animation:blink 2s step-end infinite;flex-shrink:0;"></div>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--concrete2);letter-spacing:0.08em;">
+            <span class="en-only">ACCEPTING NEW ENGAGEMENTS</span>
+            <span class="es-only">ACEPTANDO NUEVOS COMPROMISOS</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TERMINAL -->
+    <div class="contact-terminal">
+      <div class="terminal-bar">
+        <div class="t-circle red"></div>
+        <div class="t-circle yellow"></div>
+        <div class="t-circle green"></div>
+        <div class="terminal-title-bar">
+          <span class="en-only">ARGUS — SECURE CONTACT INTERFACE</span>
+          <span class="es-only">ARGUS — INTERFAZ DE CONTACTO SEGURO</span>
+        </div>
+      </div>
+      <div class="terminal-body">
+        <div class="t-line">
+          <span class="t-prompt">$</span>
+          <span class="t-text">argus-contact --secure --priority HIGH</span>
+        </div>
+        <div class="t-line" style="margin-top:12px;margin-bottom:4px;">
+          <span class="t-prompt" style="color:var(--concrete);">//</span>
+          <span class="t-text" style="color:var(--concrete);">
+            <span class="en-only">CONNECTION ESTABLISHED — EC-MOR-001</span>
+            <span class="es-only">CONEXIÓN ESTABLECIDA — EC-MOR-001</span>
+          </span>
+        </div>
+        <div class="t-line">
+          <span class="t-prompt" style="color:var(--concrete);">//</span>
+          <span class="t-text" style="color:var(--concrete);">
+            <span class="en-only">ENTER ORGANIZATION NAME:</span>
+            <span class="es-only">NOMBRE DE LA ORGANIZACIÓN:</span>
+          </span>
+        </div>
+        <div class="t-input-line">
+          <span class="t-prompt">›</span>
+          <input class="t-input" type="text" id="org-input"
+            placeholder="Institution / Organización">
+        </div>
+
+        <div class="t-line" style="margin-top:12px;">
+          <span class="t-prompt" style="color:var(--concrete);">//</span>
+          <span class="t-text" style="color:var(--concrete);">
+            <span class="en-only">DESCRIBE YOUR SITUATION:</span>
+            <span class="es-only">DESCRIBA SU SITUACIÓN:</span>
+          </span>
+        </div>
+        <div class="t-input-line">
+          <span class="t-prompt">›</span>
+          <input class="t-input" type="text" id="desc-input"
+            placeholder="Brief description / Descripción breve">
+        </div>
+
+        <div class="t-line" style="margin-top:12px;">
+          <span class="t-prompt" style="color:var(--concrete);">//</span>
+          <span class="t-text" style="color:var(--concrete);">
+            <span class="en-only">CONTACT CHANNEL (email / phone):</span>
+            <span class="es-only">CANAL DE CONTACTO (email / teléfono):</span>
+          </span>
+        </div>
+        <div class="t-input-line">
+          <span class="t-prompt">›</span>
+          <input class="t-input" type="text" id="contact-input"
+            placeholder="email / teléfono">
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;">
+          <div class="t-line" style="margin:0;">
+            <span class="t-prompt">$</span>
+            <span class="t-text">_<span class="t-cursor"></span></span>
+          </div>
+          <button class="t-submit" onclick="submitContact()">
+            <span class="en-only">TRANSMIT →</span>
+            <span class="es-only">TRANSMITIR →</span>
+          </button>
+        </div>
+
+        <div id="contact-confirm" style="display:none;margin-top:16px;font-family:var(--mono);font-size:11px;color:#22C55E;letter-spacing:0.1em;line-height:1.8;">
+          <span class="en-only">✓ MESSAGE RECEIVED — RESPONSE WITHIN 24H — REF: ARG-<span id="ref-num-en"></span></span>
+          <span class="es-only">✓ MENSAJE RECIBIDO — RESPUESTA EN 24H — REF: ARG-<span id="ref-num-es"></span></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<footer>
+  <div class="footer-mark">ARGUS</div>
+  <div style="text-align:right;">
+    <div class="footer-info">
+      <span class="hi en-only">SOVEREIGN DIGITAL DEFENSE</span>
+      <span class="hi es-only">DEFENSA DIGITAL SOBERANA</span><br>
+      MACAS, MORONA SANTIAGO, ECUADOR<br>
+      REF: ARG-WEB-001 — VERSION 1.0<br>
+      <span style="color:rgba(255,255,255,0.1)">
+        <span class="en-only">ARGUS PANOPTES PROTOCOL ACTIVE</span>
+        <span class="es-only">PROTOCOLO ARGUS PANOPTES ACTIVO</span>
+      </span>
+    </div>
+    <div class="footer-tagline">
+      <span class="en-only">NOTHING UNSEEN ◆</span>
+      <span class="es-only">NADA SIN DETECTAR ◆</span>
+    </div>
+  </div>
+</footer>
+
+
+<script>
+/* ── LANGUAGE TOGGLE ── */
+function setLang(lang) {
+  document.body.classList.toggle('lang-es', lang === 'es');
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn:${lang === 'en' ? 'first' : 'last'}-child`).classList.add('active');
+  document.documentElement.lang = lang;
+}
+
+/* ── SCROLL REVEAL ── */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+/* ── CONTACT SUBMIT ── */
+function submitContact() {
+  const org     = document.getElementById('org-input').value.trim();
+  const contact = document.getElementById('contact-input').value.trim();
+
+  if (!org && !contact) {
+    document.getElementById('org-input').style.color = 'var(--alert)';
+    return;
+  }
+
+  const ref = Math.floor(Math.random() * 90000) + 10000;
+  document.getElementById('ref-num-en').textContent = ref;
+  document.getElementById('ref-num-es').textContent = ref;
+  document.getElementById('contact-confirm').style.display = 'block';
+
+  document.querySelectorAll('.t-input').forEach(i => i.disabled = true);
+  document.querySelector('.t-submit').disabled = true;
+  document.querySelector('.t-submit').style.opacity = '0.4';
+}
+
+/* ── NAV ACTIVE STATE ── */
+const navLinks = document.querySelectorAll('.nav-links a');
+const sectionObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(a => a.style.color = '');
+      const link = document.querySelector(`.nav-links a[href="#${entry.target.id}"]`);
+      if (link) link.style.color = '#1A6AFF';
+    }
+  });
+}, { threshold: 0.35 });
+
+document.querySelectorAll('section[id]').forEach(s => sectionObserver.observe(s));
+</script>
+
+</body>
+</html>
