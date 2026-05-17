@@ -1,0 +1,101 @@
+# License — ARGUS Technologies
+
+> **REF:** `ARG-LIC-PROP-2026` · **Version:** 1.0 · **Status:** Enforced
+>
+> Copyright © 2026 **ARGUS Technologies** — Macas, Morona Santiago, Ecuador.
+> All Rights Reserved.
+
+---
+
+## This is a Proprietary Repository
+
+This is **not** an open-source project. All code, configurations, documentation, design systems, and assets in this repository are the exclusive intellectual property of **ARGUS Technologies**.
+
+No license is granted by default — not by viewing, not by forking, not by public availability.
+
+---
+
+## What You Can Do
+
+| Action | Allowed |
+|--------|---------|
+| View this repository | Yes — within GitHub ToS |
+| Fork for personal review | Yes — within GitHub ToS |
+| Study the architecture | Yes — for personal learning only |
+| Contact us for a license | Yes — always welcome |
+
+---
+
+## What You Cannot Do
+
+| Action | Status |
+|--------|--------|
+| Copy or reproduce any part of the Work | Prohibited |
+| Modify, adapt, or create derivatives | Prohibited |
+| Distribute or redistribute | Prohibited |
+| Reverse engineer compiled components | Prohibited |
+| Deploy commercially, governmentally, or institutionally | Requires formal contract [`ARG-SVC-002`] |
+| Rebrand or resell | Prohibited |
+
+---
+
+## Public Visibility ≠ Open Source
+
+If this repository is public on GitHub, that is for **institutional transparency and portfolio purposes only**.
+
+It does **not** mean:
+- The code is free to use
+- Rights have been transferred
+- You have permission to deploy or distribute
+
+---
+
+## Confidentiality Notice
+
+Parts of this Work may reference:
+
+- Internal operational protocols
+- Network architecture patterns
+- Threat vector configurations
+- Security response frameworks
+
+Unauthorized exposure of these materials is treated as a breach of operational hygiene and will be pursued under:
+
+- **LOPDP** — Ley Orgánica de Protección de Datos Personales
+- Ecuadorian cybersecurity and intellectual property legal frameworks
+- Applicable civil and criminal remedies
+
+---
+
+## Disclaimer of Warranty
+
+The Work is provided **"as is"** — without warranty of any kind, express or implied. ARGUS Technologies is not liable for any claims, damages, or liabilities arising from use of or connection with this Work.
+
+---
+
+## Governing Law
+
+This license is governed by the laws of the **Republic of Ecuador**. Disputes fall under the exclusive jurisdiction of the competent courts of **Morona Santiago Province**.
+
+---
+
+## 📬 Licensing & Commercial Inquiries
+
+To request a service contract, commercial license, or written authorization:
+
+```
+ARGUS Technologies — Legal & Licensing Division
+HQ      : Macas, Morona Santiago, Ecuador
+Web     : argustechnologies.eco.com.ec
+Ref     : ARG-LIC-PROP-2026
+```
+
+---
+
+> *For the full legal text, see the [`LICENSE`](./LICENSE) file in the root of this repository.*
+
+<div align="center">
+
+`[ SOVEREIGN DIGITAL DEFENSE — DEFENSA DIGITAL SOBERANA — MACAS HQ ]`
+
+</div>
